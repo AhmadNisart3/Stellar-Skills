@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stellar Skills - Loading</title>
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.34/build/spline-viewer.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: #0a0a0a;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            will-change: transform;
+        }
+
+        .space-model, .rocket-model {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            will-change: transform, opacity, filter;
+            transform-origin: center center;
+            backface-visibility: hidden;
+            -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+        }
+
+        .space-model {
+            opacity: 0;
+            transform: scale3d(1.03, 1.03, 1) translateZ(0);
+            filter: blur(2px) brightness(0.9);
+            animation: fadeInSpace 3.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+        }
+
+        .rocket-model {
+            opacity: 0;
+            transform: scale3d(0.85, 0.85, 1) translate3d(0, 25px, 0);
+            filter: blur(2px);
+            animation: fadeInRocket 2.5s cubic-bezier(0.165, 0.84, 0.44, 1) 3.5s forwards;
+            border-radius: 12px;
+            transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        /* Instant space vanish when rocket appears */
+        .space-instant-hide {
+            opacity: 0 !important;
+            animation: none !important;
+        }
+
+        /* Ultra-smooth space fade in animation */
+        @keyframes fadeInSpace {
+            0% {
+                opacity: 0;
+                transform: scale3d(1.03, 1.03, 1) translateZ(0);
+                filter: blur(2px) brightness(0.9);
+            }
+            20% {
+                opacity: 0.4;
+                transform: scale3d(1.015, 1.015, 1) translateZ(0);
+                filter: blur(1.2px) brightness(0.95);
+            }
+            40% {
+                opacity: 0.7;
+                transform: scale3d(1.008, 1.008, 1) translateZ(0);
+                filter: blur(0.6px) brightness(0.98);
+            }
+            70% {
+                opacity: 0.9;
+                transform: scale3d(1.003, 1.003, 1) translateZ(0);
+                filter: blur(0.2px) brightness(0.99);
+            }
+            100% {
+                opacity: 1;
+                transform: scale3d(1, 1, 1) translateZ(0);
+                filter: blur(0px) brightness(1);
+            }
+        }
+
+        /* Ultra-smooth rocket fade in animation */
+        @keyframes fadeInRocket {
+            0% {
+                opacity: 0;
+                transform: scale3d(0.85, 0.85, 1) translate3d(0, 25px, 0);
+                filter: blur(2px);
+            }
+            20% {
+                opacity: 0.3;
+                transform: scale3d(0.9, 0.9, 1) translate3d(0, 18px, 0);
+                filter: blur(1.4px);
+            }
+            40% {
+                opacity: 0.6;
+                transform: scale3d(0.94, 0.94, 1) translate3d(0, 12px, 0);
+                filter: blur(0.8px);
+            }
+            60% {
+                opacity: 0.8;
+                transform: scale3d(0.97, 0.97, 1) translate3d(0, 6px, 0);
+                filter: blur(0.4px);
+            }
+            80% {
+                opacity: 0.95;
+                transform: scale3d(0.99, 0.99, 1) translate3d(0, 2px, 0);
+                filter: blur(0.1px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
+                filter: blur(0px);
+            }
+        }
+
+        /* Ultra-smooth space fade out animation */
+        .space-fadeout {
+            animation: fadeOutSpace 3s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards !important;
+        }
+
+        @keyframes fadeOutSpace {
+            0% {
+                opacity: 1;
+                transform: scale3d(1, 1, 1) translateZ(0);
+                filter: blur(0px) brightness(1);
+            }
+            20% {
+                opacity: 0.8;
+                transform: scale3d(1.01, 1.01, 1) translateZ(0);
+                filter: blur(0.5px) brightness(0.95);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale3d(1.03, 1.03, 1) translateZ(0);
+                filter: blur(1.5px) brightness(0.85);
+            }
+            80% {
+                opacity: 0.2;
+                transform: scale3d(1.06, 1.06, 1) translateZ(0);
+                filter: blur(3px) brightness(0.7);
+            }
+            100% {
+                opacity: 0;
+                transform: scale3d(1.08, 1.08, 1) translateZ(0);
+                filter: blur(4px) brightness(0.5);
+            }
+        }
+
+        /* Ultra-smooth rocket flight animation with glow effect */
+        .rocket-flight {
+            animation: rocketFly 6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards !important;
+            box-shadow:
+                0 0 50px rgba(74, 144, 226, 0.8),
+                0 0 100px rgba(74, 144, 226, 0.6),
+                0 0 150px rgba(74, 144, 226, 0.4),
+                0 0 200px rgba(74, 144, 226, 0.2),
+                inset 0 0 50px rgba(74, 144, 226, 0.2);
+        }
+
+        @keyframes rocketFly {
+            0% {
+                opacity: 1;
+                transform: scale3d(1, 1, 1) translate3d(0, 0, 0) rotateZ(0deg);
+                filter: blur(0px);
+            }
+            8% {
+                opacity: 1;
+                transform: scale3d(0.98, 0.98, 1) translate3d(0, -40px, 0) rotateZ(-1deg);
+                filter: blur(0px);
+            }
+            16% {
+                opacity: 1;
+                transform: scale3d(0.95, 0.95, 1) translate3d(0, -90px, 0) rotateZ(-3deg);
+                filter: blur(0px);
+            }
+            25% {
+                opacity: 1;
+                transform: scale3d(0.9, 0.9, 1) translate3d(0, -150px, 0) rotateZ(-5deg);
+                filter: blur(0.1px);
+            }
+            35% {
+                opacity: 0.98;
+                transform: scale3d(0.82, 0.82, 1) translate3d(0, -220px, 0) rotateZ(-8deg);
+                filter: blur(0.3px);
+            }
+            45% {
+                opacity: 0.95;
+                transform: scale3d(0.72, 0.72, 1) translate3d(0, -300px, 0) rotateZ(-12deg);
+                filter: blur(0.6px);
+            }
+            55% {
+                opacity: 0.9;
+                transform: scale3d(0.6, 0.6, 1) translate3d(0, -390px, 0) rotateZ(-16deg);
+                filter: blur(1px);
+            }
+            65% {
+                opacity: 0.8;
+                transform: scale3d(0.46, 0.46, 1) translate3d(0, -490px, 0) rotateZ(-21deg);
+                filter: blur(1.6px);
+            }
+            75% {
+                opacity: 0.65;
+                transform: scale3d(0.35, 0.35, 1) translate3d(0, -600px, 0) rotateZ(-26deg);
+                filter: blur(2.4px);
+            }
+            85% {
+                opacity: 0.45;
+                transform: scale3d(0.25, 0.25, 1) translate3d(0, -720px, 0) rotateZ(-32deg);
+                filter: blur(3.5px);
+            }
+            95% {
+                opacity: 0.2;
+                transform: scale3d(0.15, 0.15, 1) translate3d(0, -850px, 0) rotateZ(-38deg);
+                filter: blur(5px);
+            }
+            100% {
+                opacity: 0;
+                transform: scale3d(0.08, 0.08, 1) translate3d(0, -1000px, 0) rotateZ(-45deg);
+                filter: blur(7px);
+            }
+        }
+
+        /* Enhanced particle effects */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            will-change: opacity;
+        }
+
+        .particles.active {
+            animation: particlesFade 8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+        }
+
+        @keyframes particlesFade {
+            0% { opacity: 0; }
+            12% { opacity: 0.15; }
+            20% { opacity: 0.3; }
+            25% { opacity: 0.45; }
+            75% { opacity: 0.45; }
+            80% { opacity: 0.3; }
+            88% { opacity: 0.15; }
+            100% { opacity: 0; }
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            will-change: transform, opacity;
+            animation: twinkle 5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.15;
+                transform: scale3d(0.8, 0.8, 1);
+            }
+            25% {
+                opacity: 0.4;
+                transform: scale3d(1, 1, 1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale3d(1.4, 1.4, 1);
+            }
+            75% {
+                opacity: 0.6;
+                transform: scale3d(1.1, 1.1, 1);
+            }
+        }
+
+        /* Loading Complete Fade Out Animation */
+        .loading-complete {
+            animation: fadeOutComplete 2s ease-in-out forwards;
+        }
+
+        @keyframes fadeOutComplete {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.1);
+                visibility: hidden;
+            }
+        }
+
+        /* Loading Text */
+        .loading-text {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInText 1s ease-in-out 1s forwards;
+        }
+
+        @keyframes fadeInText {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .loading-text.fade-out {
+            animation: fadeOutText 1s ease-in-out forwards;
+        }
+
+        @keyframes fadeOutText {
+            0% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+        }
+
+        /* Responsive design for mobile devices */
+        @media (max-width: 480px) {
+            .rocket-flight {
+                box-shadow:
+                    0 0 30px rgba(74, 144, 226, 0.8),
+                    0 0 60px rgba(74, 144, 226, 0.6),
+                    0 0 90px rgba(74, 144, 226, 0.4),
+                    inset 0 0 30px rgba(74, 144, 226, 0.2);
+            }
+
+            .particle {
+                width: 1.5px;
+                height: 1.5px;
+            }
+
+            .loading-text {
+                font-size: 1rem;
+                bottom: 8%;
+            }
+        }
+
+        /* Responsive design for tablets */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .rocket-flight {
+                box-shadow:
+                    0 0 40px rgba(74, 144, 226, 0.8),
+                    0 0 80px rgba(74, 144, 226, 0.6),
+                    0 0 120px rgba(74, 144, 226, 0.4),
+                    inset 0 0 40px rgba(74, 144, 226, 0.2);
+            }
+        }
+
+        /* Responsive design for laptops */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .rocket-flight {
+                box-shadow:
+                    0 0 45px rgba(74, 144, 226, 0.8),
+                    0 0 90px rgba(74, 144, 226, 0.6),
+                    0 0 135px rgba(74, 144, 226, 0.4),
+                    inset 0 0 45px rgba(74, 144, 226, 0.2);
+            }
+        }
+
+        /* Responsive design for desktops */
+        @media (min-width: 1025px) {
+            .rocket-flight {
+                box-shadow:
+                    0 0 60px rgba(74, 144, 226, 0.8),
+                    0 0 120px rgba(74, 144, 226, 0.6),
+                    0 0 180px rgba(74, 144, 226, 0.4),
+                    0 0 240px rgba(74, 144, 226, 0.2),
+                    inset 0 0 60px rgba(74, 144, 226, 0.2);
+            }
+        }
+
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .particle {
+                box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+            }
+        }
+
+        /* Landscape orientation on mobile */
+        @media (max-height: 480px) and (orientation: landscape) {
+            .container {
+                height: 100vh;
+            }
+
+            .space-model, .rocket-model {
+                height: 100vh;
+            }
+
+            .loading-text {
+                bottom: 5%;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Performance optimizations */
+        spline-viewer {
+            width: 100%;
+            height: 100%;
+            display: block;
+            will-change: transform;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
+
+        /* Prevent scrolling on mobile */
+        @media (max-width: 768px) {
+            body {
+                position: fixed;
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Space Model -->
+        <div class="space-model" id="spaceModel">
+            <spline-viewer url="https://prod.spline.design/zdnrC9dPAHkHQL1u/scene.splinecode"></spline-viewer>
+        </div>
+
+        <!-- Rocket Model -->
+        <div class="rocket-model" id="rocketModel">
+            <spline-viewer url="https://prod.spline.design/GW8dbapxg4pg8MY9/scene.splinecode"></spline-viewer>
+        </div>
+
+        <!-- Particle Effects -->
+        <div class="particles" id="particles"></div>
+
+        <!-- Loading Text -->
+        <div class="loading-text" id="loadingText">
+            Launching Stellar Skills...
+        </div>
+    </div>
+
+    <script>
+        // Performance optimized particle creation
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = window.innerWidth < 768 ? 30 : 50; // Fewer particles on mobile
+            const fragment = document.createDocumentFragment();
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 4 + 's';
+                particle.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                fragment.appendChild(particle);
+            }
+
+            particlesContainer.appendChild(fragment);
+        }
+
+        // Force reload animation on every page visit
+        function forceReloadAnimation() {
+            // Clear any existing session flags
+            sessionStorage.removeItem('animationCompleted');
+            sessionStorage.removeItem('visitedBefore');
+
+            // Reset all animations
+            const spaceModel = document.getElementById('spaceModel');
+            const rocketModel = document.getElementById('rocketModel');
+            const particles = document.getElementById('particles');
+            const loadingText = document.getElementById('loadingText');
+
+            // Reset classes and styles
+            if (spaceModel) {
+                spaceModel.classList.remove('space-instant-hide', 'space-fadeout');
+                spaceModel.style.opacity = '';
+                spaceModel.style.animation = '';
+            }
+
+            if (rocketModel) {
+                rocketModel.classList.remove('rocket-flight');
+                rocketModel.style.opacity = '';
+                rocketModel.style.animation = '';
+            }
+
+            if (particles) {
+                particles.classList.remove('active');
+                particles.innerHTML = '';
+            }
+
+            if (loadingText) {
+                loadingText.classList.remove('fade-out');
+                loadingText.style.opacity = '';
+            }
+
+            // Mark that we're starting fresh
+            sessionStorage.setItem('animationStarted', 'true');
+        }
+
+        // Redirect to main website
+        function redirectToMainSite() {
+            // Mark animation as completed and set flag for main site
+            sessionStorage.setItem('animationCompleted', 'true');
+            sessionStorage.setItem('fromLoadingPage', 'true');
+
+            // Add fade out class to loading text
+            const loadingText = document.getElementById('loadingText');
+            if (loadingText) {
+                loadingText.classList.add('fade-out');
+            }
+
+            // Add loading complete animation to container
+            const container = document.querySelector('.container');
+            container.classList.add('loading-complete');
+
+            // Redirect after animation completes
+            setTimeout(() => {
+                // You can change this to the actual path of your main website
+                // Since you renamed to index.html, update the redirect
+                window.location.href = 'deploy.html';
+
+                // Alternative: If you want to use a different path or URL
+                // window.location.href = './main-website.html';
+                // window.location.href = 'https://yourwebsite.com';
+            }, 2000); // 2 seconds for smooth transition
+        }
+
+        // Ultra-smooth animation sequence controller
+        function startAnimationSequence() {
+            const spaceModel = document.getElementById('spaceModel');
+            const rocketModel = document.getElementById('rocketModel');
+            const particles = document.getElementById('particles');
+
+            // Create particles
+            createParticles();
+
+            // Use requestAnimationFrame for smoother timing
+            requestAnimationFrame(() => {
+                // Step 1: Space appears (0-3.5s) - handled by CSS
+
+                // Step 2: Space instantly vanishes and rocket appears (3.5s)
+                setTimeout(() => {
+                    requestAnimationFrame(() => {
+                        spaceModel.classList.add('space-instant-hide');
+                    });
+                }, 3500);
+
+                // Step 3: Add particles during rocket display (4s)
+                setTimeout(() => {
+                    requestAnimationFrame(() => {
+                        particles.classList.add('active');
+                    });
+                }, 4000);
+
+                // Step 4: Rocket starts flying with glow effect (8s)
+                setTimeout(() => {
+                    requestAnimationFrame(() => {
+                        rocketModel.classList.add('rocket-flight');
+                    });
+                }, 8000);
+
+                // Step 5: Redirect to main website after animation completes (14s)
+                setTimeout(() => {
+                    redirectToMainSite();
+                }, 14000);
+            });
+        }
+
+        // Optimized resize handler with debouncing
+        let resizeTimeout;
+        function handleResize() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                const models = document.querySelectorAll('spline-viewer');
+                models.forEach(model => {
+                    model.style.width = '100%';
+                    model.style.height = '100%';
+                });
+            }, 100);
+        }
+
+        // Performance optimized event listeners
+        window.addEventListener('load', () => {
+            console.log('🔄 Page loaded - Starting fresh animation sequence');
+
+            // Always force reload animation regardless of how user got here
+            forceReloadAnimation();
+
+            // Use a small delay to ensure everything is loaded
+            setTimeout(() => {
+                startAnimationSequence();
+            }, 300);
+        });
+
+        // Handle page refresh/reload specifically
+        window.addEventListener('beforeunload', () => {
+            console.log('🔄 Page is about to reload');
+            // Clear any session data to ensure fresh start
+            sessionStorage.clear();
+        });
+
+        // Handle browser back/forward navigation
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                console.log('🔄 Page restored from cache - Forcing reload');
+                // Force a complete reload if page was restored from cache
+                window.location.reload();
+            }
+        });
+
+        // Additional reload detection
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 DOM loaded - Preparing animation');
+            // Ensure we start fresh even on fast reloads
+            forceReloadAnimation();
+        });
+
+        window.addEventListener('resize', handleResize, { passive: true });
+
+        // Prevent bounce on iOS
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+            document.addEventListener('touchstart', function(e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(e) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, { passive: false });
+        }
+
+        // Reduce motion for accessibility
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            const style = document.createElement('style');
+            style.textContent = `
+                *, *::before, *::after {
+                    animation-duration: 0.01ms !important;
+                    animation-iteration-count: 1 !important;
+                    transition-duration: 0.01ms !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Prevent right-click and handle keyboard shortcuts for reload
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', function(e) {
+            // Handle F5, Ctrl+R, Ctrl+F5 (refresh shortcuts)
+            if (e.key === 'F5' || (e.ctrlKey && e.key === 'r') || (e.ctrlKey && e.key === 'F5')) {
+                console.log('🔄 Manual refresh detected');
+                // Allow the refresh but ensure animation restarts
+                sessionStorage.clear();
+                return true; // Allow default refresh behavior
+            }
+
+            // Prevent Escape from interrupting animation
+            if (e.key === 'Escape') {
+                e.preventDefault();
+            }
+
+            // Handle Ctrl+Shift+R (hard refresh)
+            if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+                console.log('🔄 Hard refresh detected');
+                sessionStorage.clear();
+                return true; // Allow default refresh behavior
+            }
+        });
+
+        // Handle page visibility change (when user switches tabs)
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                console.log('Page hidden - animation paused');
+            } else {
+                console.log('Page visible - animation resumed');
+            }
+        });
+
+        // Add loading progress tracking
+        let modelsLoaded = 0;
+        const totalModels = 2; // Space and rocket models
+
+        function checkModelsLoaded() {
+            modelsLoaded++;
+            console.log(`Model ${modelsLoaded}/${totalModels} loaded`);
+
+            if (modelsLoaded >= totalModels) {
+                console.log('All 3D models loaded successfully!');
+            }
+        }
+
+        // Monitor model loading (optional)
+        const splineViewers = document.querySelectorAll('spline-viewer');
+        splineViewers.forEach((viewer, index) => {
+            viewer.addEventListener('load', () => {
+                checkModelsLoaded();
+            });
+        });
+
+        console.log('🚀 Stellar Skills loading sequence initialized!');
+        console.log('🔄 RELOAD BEHAVIOR: Animation plays on EVERY page visit/refresh');
+        console.log('📋 Sequence timeline:');
+        console.log('0-3.5s: Space environment appears');
+        console.log('3.5s: Space vanishes, rocket appears');
+        console.log('4s: Particle effects activate');
+        console.log('8s: Rocket launch sequence begins');
+        console.log('14s: Redirect to main website');
+        console.log('💡 Note: Press F5, Ctrl+R, or refresh button to restart animation');
+    </script>
+</body>
+</html>
