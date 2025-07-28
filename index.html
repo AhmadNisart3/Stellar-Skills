@@ -97,7 +97,7 @@
             }
         }
 
-        /* Ultra-smooth rocket fade in animation */
+       
         @keyframes fadeInRocket {
             0% {
                 opacity: 0;
@@ -131,7 +131,7 @@
             }
         }
 
-        /* Ultra-smooth space fade out animation */
+
         .space-fadeout {
             animation: fadeOutSpace 3s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards !important;
         }
@@ -164,7 +164,7 @@
             }
         }
 
-        /* Ultra-smooth rocket flight animation with glow effect */
+      
         .rocket-flight {
             animation: rocketFly 6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards !important;
             box-shadow:
@@ -238,7 +238,7 @@
             }
         }
 
-        /* Enhanced particle effects */
+      
         .particles {
             position: absolute;
             top: 0;
@@ -295,7 +295,7 @@
             }
         }
 
-        /* Loading Complete Fade Out Animation */
+
         .loading-complete {
             animation: fadeOutComplete 2s ease-in-out forwards;
         }
@@ -316,7 +316,7 @@
             }
         }
 
-        /* Loading Text */
+     
         .loading-text {
             position: absolute;
             bottom: 10%;
@@ -356,7 +356,7 @@
             }
         }
 
-        /* Responsive design for mobile devices */
+
         @media (max-width: 480px) {
             .rocket-flight {
                 box-shadow:
@@ -377,7 +377,7 @@
             }
         }
 
-        /* Responsive design for tablets */
+        
         @media (min-width: 481px) and (max-width: 768px) {
             .rocket-flight {
                 box-shadow:
@@ -388,7 +388,6 @@
             }
         }
 
-        /* Responsive design for laptops */
         @media (min-width: 769px) and (max-width: 1024px) {
             .rocket-flight {
                 box-shadow:
@@ -399,7 +398,6 @@
             }
         }
 
-        /* Responsive design for desktops */
         @media (min-width: 1025px) {
             .rocket-flight {
                 box-shadow:
@@ -411,14 +409,13 @@
             }
         }
 
-        /* High DPI displays */
         @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
             .particle {
                 box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
             }
         }
 
-        /* Landscape orientation on mobile */
+      
         @media (max-height: 480px) and (orientation: landscape) {
             .container {
                 height: 100vh;
@@ -434,7 +431,7 @@
             }
         }
 
-        /* Performance optimizations */
+   
         spline-viewer {
             width: 100%;
             height: 100%;
@@ -444,7 +441,7 @@
             -webkit-transform: translateZ(0);
         }
 
-        /* Prevent scrolling on mobile */
+ 
         @media (max-width: 768px) {
             body {
                 position: fixed;
@@ -458,25 +455,23 @@
 </head>
 <body>
     <div class="container">
-        <!-- Space Model -->
+       
         <div class="space-model" id="spaceModel">
             <spline-viewer url="https://prod.spline.design/zdnrC9dPAHkHQL1u/scene.splinecode"></spline-viewer>
         </div>
 
-        <!-- Rocket Model -->
+    
         <div class="rocket-model" id="rocketModel">
             <spline-viewer url="https://prod.spline.design/GW8dbapxg4pg8MY9/scene.splinecode"></spline-viewer>
         </div>
 
-        <!-- Particle Effects -->
         <div class="particles" id="particles"></div>
 
-        <!-- Loading Text -->
-        
+       
     </div>
 
     <script>
-        // Performance optimized particle creation
+
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
             const particleCount = window.innerWidth < 768 ? 30 : 50; // Fewer particles on mobile
@@ -495,19 +490,19 @@
             particlesContainer.appendChild(fragment);
         }
 
-        // Force reload animation on every page visit
+        
         function forceReloadAnimation() {
-            // Clear any existing session flags
+      
             sessionStorage.removeItem('animationCompleted');
             sessionStorage.removeItem('visitedBefore');
 
-            // Reset all animations
+        
             const spaceModel = document.getElementById('spaceModel');
             const rocketModel = document.getElementById('rocketModel');
             const particles = document.getElementById('particles');
             const loadingText = document.getElementById('loadingText');
 
-            // Reset classes and styles
+     
             if (spaceModel) {
                 spaceModel.classList.remove('space-instant-hide', 'space-fadeout');
                 spaceModel.style.opacity = '';
@@ -530,17 +525,16 @@
                 loadingText.style.opacity = '';
             }
 
-            // Mark that we're starting fresh
+         
             sessionStorage.setItem('animationStarted', 'true');
         }
 
-        // Redirect to main website
         function redirectToMainSite() {
-            // Mark animation as completed and set flag for main site
+         
             sessionStorage.setItem('animationCompleted', 'true');
             sessionStorage.setItem('fromLoadingPage', 'true');
 
-            // Add fade out class to loading text
+      
             const loadingText = document.getElementById('loadingText');
             if (loadingText) {
                 loadingText.classList.add('fade-out');
@@ -552,58 +546,51 @@
 
             // Redirect after animation completes
             setTimeout(() => {
-                // You can change this to the actual path of your main website
-                // Since you renamed to index.html, update the redirect
+               
                 window.location.href = 'deploy.html';
 
-                // Alternative: If you want to use a different path or URL
-                // window.location.href = './main-website.html';
-                // window.location.href = 'https://yourwebsite.com';
-            }, 2000); // 2 seconds for smooth transition
+            }, 2000);
         }
 
-        // Ultra-smooth animation sequence controller
+     
         function startAnimationSequence() {
             const spaceModel = document.getElementById('spaceModel');
             const rocketModel = document.getElementById('rocketModel');
             const particles = document.getElementById('particles');
 
-            // Create particles
+         
             createParticles();
 
-            // Use requestAnimationFrame for smoother timing
+ 
             requestAnimationFrame(() => {
-                // Step 1: Space appears (0-3.5s) - handled by CSS
-
-                // Step 2: Space instantly vanishes and rocket appears (3.5s)
+             
                 setTimeout(() => {
                     requestAnimationFrame(() => {
                         spaceModel.classList.add('space-instant-hide');
                     });
                 }, 3500);
 
-                // Step 3: Add particles during rocket display (4s)
+ 
                 setTimeout(() => {
                     requestAnimationFrame(() => {
                         particles.classList.add('active');
                     });
                 }, 4000);
 
-                // Step 4: Rocket starts flying with glow effect (8s)
+       
                 setTimeout(() => {
                     requestAnimationFrame(() => {
                         rocketModel.classList.add('rocket-flight');
                     });
                 }, 8000);
 
-                // Step 5: Redirect to main website after animation completes (14s)
+      
                 setTimeout(() => {
                     redirectToMainSite();
                 }, 14000);
             });
         }
 
-        // Optimized resize handler with debouncing
         let resizeTimeout;
         function handleResize() {
             clearTimeout(resizeTimeout);
@@ -616,45 +603,43 @@
             }, 100);
         }
 
-        // Performance optimized event listeners
+       
         window.addEventListener('load', () => {
             console.log('🔄 Page loaded - Starting fresh animation sequence');
 
-            // Always force reload animation regardless of how user got here
+      
             forceReloadAnimation();
 
-            // Use a small delay to ensure everything is loaded
+
             setTimeout(() => {
                 startAnimationSequence();
             }, 300);
         });
 
-        // Handle page refresh/reload specifically
+      
         window.addEventListener('beforeunload', () => {
             console.log('🔄 Page is about to reload');
-            // Clear any session data to ensure fresh start
+      
             sessionStorage.clear();
         });
-
-        // Handle browser back/forward navigation
         window.addEventListener('pageshow', (event) => {
             if (event.persisted) {
                 console.log('🔄 Page restored from cache - Forcing reload');
-                // Force a complete reload if page was restored from cache
+               
                 window.location.reload();
             }
         });
 
-        // Additional reload detection
+
         window.addEventListener('DOMContentLoaded', () => {
             console.log('🚀 DOM loaded - Preparing animation');
-            // Ensure we start fresh even on fast reloads
+ 
             forceReloadAnimation();
         });
 
         window.addEventListener('resize', handleResize, { passive: true });
 
-        // Prevent bounce on iOS
+   
         if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
             document.addEventListener('touchstart', function(e) {
                 if (e.touches.length > 1) {
@@ -672,7 +657,6 @@
             }, { passive: false });
         }
 
-        // Reduce motion for accessibility
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             const style = document.createElement('style');
             style.textContent = `
@@ -685,31 +669,29 @@
             document.head.appendChild(style);
         }
 
-        // Prevent right-click and handle keyboard shortcuts for reload
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', function(e) {
-            // Handle F5, Ctrl+R, Ctrl+F5 (refresh shortcuts)
+       
             if (e.key === 'F5' || (e.ctrlKey && e.key === 'r') || (e.ctrlKey && e.key === 'F5')) {
                 console.log('🔄 Manual refresh detected');
-                // Allow the refresh but ensure animation restarts
+               
                 sessionStorage.clear();
-                return true; // Allow default refresh behavior
+                return true; 
             }
 
-            // Prevent Escape from interrupting animation
+           
             if (e.key === 'Escape') {
                 e.preventDefault();
             }
 
-            // Handle Ctrl+Shift+R (hard refresh)
             if (e.ctrlKey && e.shiftKey && e.key === 'R') {
                 console.log('🔄 Hard refresh detected');
                 sessionStorage.clear();
-                return true; // Allow default refresh behavior
+                return true; 
             }
         });
 
-        // Handle page visibility change (when user switches tabs)
+    
         document.addEventListener('visibilitychange', function() {
             if (document.hidden) {
                 console.log('Page hidden - animation paused');
@@ -718,9 +700,8 @@
             }
         });
 
-        // Add loading progress tracking
         let modelsLoaded = 0;
-        const totalModels = 2; // Space and rocket models
+        const totalModels = 2; 
 
         function checkModelsLoaded() {
             modelsLoaded++;
@@ -731,7 +712,7 @@
             }
         }
 
-        // Monitor model loading (optional)
+        
         const splineViewers = document.querySelectorAll('spline-viewer');
         splineViewers.forEach((viewer, index) => {
             viewer.addEventListener('load', () => {
